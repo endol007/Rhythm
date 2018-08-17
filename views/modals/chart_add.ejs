@@ -1,0 +1,94 @@
+<div id="add" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:600px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Add Chart</label>
+      </div>
+      <div class="w3-panel">
+        <form action="/charts/add" method="POST" autocomplete="off" onsubmit="document.getElementById('loading').style.display='block'">
+          <input id="add_id" class="w3-input" type="text" name="id" style="display:none;">
+          <table class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td><b><label class="w3-small">Description</label></b></td>
+              <td><input id="add_description" class="w3-input w3-border" type="text" name="description" placeholder="Description"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Node</label></b></td>
+              <td>
+                <select id="add_node" class="w3-select w3-border" name="deveui" required>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Parameters</label></b></td>
+              <td>
+                <select class="w3-select w3-border" name="params">
+                  <option value="sensors">sensors</option>
+                  <option value="signals">signals</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Start Date</label></b></td>
+              <td><input id="add_start" class="w3-input w3-border" type="date" name="start" required></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">End Date</label></b></td>
+              <td><input id="add_end" class="w3-input w3-border" type="date" name="end" required oninput="dateCheck()"></td>
+            </tr>
+          </table>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">&nbsp;&nbsp;Add&nbsp;&nbsp;</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('add').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+<% if (typeof nodes != 'undefined') { %>
+  createListNodes(JSON.parse('<%- nodes %>'));
+<% } %>
+
+function openAdd() {
+  var max = new Date(new Date().getTime() + 60000*60*9).toISOString().split('T')[0];
+  document.getElementById('add_start').max = max;
+  document.getElementById('add_start').value = '';
+  document.getElementById('add_end').max = max;
+  document.getElementById('add_end').value = '';
+  document.getElementById('add_id').value = generateId();
+  document.getElementById('add_description').value = '';
+  document.getElementById('add_node').selectedIndex = 0;
+  document.getElementById('add').style.display = 'block';
+}
+
+function dateCheck() {
+  var start = document.getElementById('add_start');
+  var end = document.getElementById('add_end');
+  start.max = end.value;
+  if (!start.value || start.value > start.max) start.value = start.max;
+}
+
+function createListNodes(nodes) {
+  if (!Object.keys(nodes).length) return;
+
+  var select = document.getElementById('add_node');
+
+  for (var x in nodes) {
+    var option = document.createElement('option');
+
+    option.innerHTML = nodes[x].eui;
+    option.setAttribute('value', nodes[x].eui);
+    select.appendChild(option);
+  }
+}
+
+function generateId() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+
+  return s4() + s4() + s4() + s4();
+}
+</script>

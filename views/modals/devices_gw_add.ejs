@@ -1,0 +1,118 @@
+<div id="gw_add" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:700px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Add Gateway</label>
+      </div>
+      <div class="w3-panel">
+        <form action="/devices/gw/add" method="POST" autocomplete="off" onsubmit="return addGwCheck()">
+          <table class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td><b><label class="w3-small">Description</label></b></td>
+              <td><input id="gw_add_description" class="w3-input w3-border" type="text" name="description" placeholder="Description"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">EUI</label></b></td>
+              <td><input id="gw_add_eui" class="w3-input w3-border" type="text" name="eui" placeholder="00-00-00-00-00-00-00-00" required
+                pattern="^([0-9a-f]{2}[:-]){7}([0-9a-f]{2})$" oninput="setCustomValidity('')"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Location</label></b></td>
+              <td>
+                <div class="w3-row">
+                  <input id="gw_add_latitude" class="w3-input w3-border" type="text" name="latitude" style="display:none">
+                  <input id="gw_add_longitude" class="w3-input w3-border" type="text" name="longitude" style="display:none">
+                  <input id="gw_add_location" class="w3-input w3-border w3-col" type="text" placeholder="None" readonly style="width:90%">
+                  <a id="gw_add_showmap" class="w3-button w3-border w3-col w3-round fa fa-map-marker" style="width:10%" onclick="displayGwAddMap(true)"></a>
+                  <a id="gw_add_hidemap" class="w3-button w3-border w3-col w3-round fa fa-remove" style="width:10%;display:none" onclick="displayGwAddMap(false)"></a>
+                </div>
+                <div id="gw_add_map" class="w3-border" style="width:100%;height:200px;display:none"></div>
+              </td>
+            </tr>
+          </table>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">&nbsp;&nbsp;Add&nbsp;&nbsp;</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('gw_add').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openGwAdd() {
+  displayGwAddMap(false);
+  document.getElementById('gw_add_description').value = '';
+  document.getElementById('gw_add_eui').value = '';
+  document.getElementById('gw_add').style.display = 'block';
+}
+
+function addGwCheck() {
+  var x = document.getElementById('gw_add_eui');
+
+  if (gateways[x.value]) {
+    x.setCustomValidity('이미 등록되었습니다.');
+    x.reportValidity();
+    return false;
+  }
+
+  document.getElementById('loading').style.display = 'block';
+  return true;
+}
+
+function displayGwAddMap(b) {
+  if (!b) {
+    gw_addMarker.setPosition(null);
+    gw_addMap.setCenter({ lat: Number(defaultLocation.lat), lng: Number(defaultLocation.lng) });
+    gw_addMap.setZoom(16);
+    document.getElementById('gw_add_latitude').value = '';
+    document.getElementById('gw_add_longitude').value = '';
+    document.getElementById('gw_add_location').value = '';
+  }
+  document.getElementById('gw_add_showmap').style.display = b ? 'none' : 'block';
+  document.getElementById('gw_add_hidemap').style.display = b ? 'block' : 'none';
+  document.getElementById('gw_add_map').style.display = b ? 'block' : 'none';
+}
+
+function initGwAddMap() {
+  gw_addMap = new google.maps.Map(document.getElementById("gw_add_map"), {
+    center: { lat: Number(defaultLocation.lat), lng: Number(defaultLocation.lng) },
+    zoom: 16,
+    streetViewControl: false,
+    mapTypeControl: false,
+    scaleControl: true,
+    gestureHandling: 'greedy'
+  });
+
+  gw_addMarker = new google.maps.Marker({
+      position: null,
+      icon: {
+        url: '/images/icon_gateway.png',
+        scaledSize: new google.maps.Size(30, 30)
+      },
+      map: gw_addMap
+  });
+  gw_addMarker.setDraggable(true);
+
+  google.maps.event.addListener(gw_addMarker, "dragend", function() {
+    var location = gw_addMarker.getPosition();
+    var lat = location.lat();
+    var lng = location.lng();
+    document.getElementById('gw_add_latitude').value = lat;
+    document.getElementById('gw_add_longitude').value = lng;
+    document.getElementById('gw_add_location').value = lat + ', ' + lng;
+  });
+
+  google.maps.event.addListener(gw_addMap, 'click', function(e) {
+    if (gw_addMarker.getPosition()) return;
+
+    var location = e.latLng;
+    var lat = location.lat();
+    var lng = location.lng();
+    document.getElementById('gw_add_latitude').value = lat;
+    document.getElementById('gw_add_longitude').value = lng;
+    document.getElementById('gw_add_location').value = lat + ', ' + lng;
+    gw_addMarker.setPosition(location);
+  });
+}
+</script>

@@ -1,0 +1,76 @@
+<div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+  <div class="w3-panel">
+    <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Charts</label>
+    <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-refresh w3-right" style="cursor:pointer;" onclick="javascript:window.location.reload()"> Refresh</a>
+  </div>
+  <div class="w3-panel">
+    <table id="table_charts" class="w3-table w3-border w3-bordered w3-white w3-small">
+      <tr>
+        <th>Description</th>
+        <th>Parameters</th>
+        <th>Device EUI</th>
+        <th>Period</th>
+        <th class="w3-right w3-margin-right"><a class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Chart" onclick="openAdd()"></a></th>
+      </tr>
+      <tr>
+        <td>No data available in table</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+</div>
+<script>
+<% if (typeof charts != 'undefined') { %>
+  charts = JSON.parse('<%- charts %>');
+  createTable();
+<% } %>
+
+function createTable() {
+  if (!Object.keys(charts).length) return;
+
+  var tableBody = document.getElementById('table_charts').firstElementChild;
+  tableBody.removeChild(tableBody.children[1]);
+
+  for (var x in charts) {
+    var row = document.createElement('tr');
+    var description = document.createElement('td');
+    var parameters = document.createElement('td');
+    var deveui = document.createElement('td');
+    var period = document.createElement('td');
+    var btns = document.createElement('td');
+    var btn_draw = document.createElement('a');
+    var btn_delete = document.createElement('a');
+
+    description.innerHTML = charts[x].description ? charts[x].description : '-';
+    parameters.innerHTML = charts[x].params;
+    deveui.innerHTML = charts[x].deveui;
+    period.innerHTML = new Date(charts[x].start).toDateString() + ' - ' + new Date(charts[x].end).toDateString();
+    btns.setAttribute('class', 'w3-right w3-margin-right');
+    btn_draw.setAttribute('class', 'w3-hover-text-blue fa fa-bar-chart w3-margin-right');
+    btn_draw.setAttribute('title', 'Draw Chart');
+    btn_draw.setAttribute('style', 'cursor:pointer');
+    btn_draw.setAttribute('onclick', 'openChart(this.parentNode.parentNode.id)');
+    btn_delete.setAttribute('class', 'w3-hover-text-blue fa fa-remove');
+    btn_delete.setAttribute('title', 'Delete Chart');
+    btn_delete.setAttribute('style', 'cursor:pointer');
+    btn_delete.setAttribute('onclick', 'openDelete(this.parentNode.parentNode.id)');
+
+    btns.appendChild(btn_draw);
+    btns.appendChild(btn_delete);
+    row.appendChild(description);
+    row.appendChild(parameters);
+    row.appendChild(deveui);
+    row.appendChild(period);
+    row.appendChild(btns);
+    row.setAttribute('id', x);
+    tableBody.appendChild(row);
+  }
+}
+
+function openChart(id) {
+  window.open('https://' + location.host + '/charts/draw?id=' + id);
+}
+</script>

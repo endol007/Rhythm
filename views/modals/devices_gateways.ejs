@@ -1,0 +1,73 @@
+<div id="gateways" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:700px;">
+    <div class="w3-container w3-padding">
+      <i class="w3-hover-text-blue w3-large w3-round-large w3-right fa fa-close" style="cursor:pointer;" onclick="document.getElementById('gateways').style.display='none'"></i>
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Gateways</label>
+      </div>
+      <div class="w3-panel">
+        <table id="table_gateways" class="w3-table w3-border w3-bordered w3-white w3-small">
+          <tr>
+            <th>Description</th>
+            <th>EUI</th>
+            <th>Location</th>
+            <th class="w3-right w3-margin-right"><a class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openGwAdd()"></a></th>
+          </tr>
+          <tr>
+            <td>No data available in table</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+<% if (typeof gateways != 'undefined') { %>
+  gateways = JSON.parse('<%- gateways %>');
+  createGatewaysTable();
+<% } %>
+
+function createGatewaysTable() {
+  if (!Object.keys(gateways).length) return;
+
+  var tableBody = document.getElementById('table_gateways').firstElementChild;
+  tableBody.removeChild(tableBody.children[1]);
+
+  for (var x in gateways) {
+    var row = document.createElement('tr');
+    var description = document.createElement('td');
+    var eui = document.createElement('td');
+    var location = document.createElement('td');
+    var btns = document.createElement('td');
+    var btn_update = document.createElement('a');
+    var btn_delete = document.createElement('a');
+
+    description.innerHTML = gateways[x].description ? gateways[x].description : '-';
+    description.setAttribute('style', 'width:150px;');
+    eui.innerHTML = gateways[x].eui;
+    location.innerHTML = gateways[x].location.lat && gateways[x].location.lng ?
+      gateways[x].location.lat + ', ' + gateways[x].location.lng : '-';
+    btns.setAttribute('class', 'w3-right w3-margin-right');
+    btn_update.setAttribute('class', 'w3-hover-text-blue fa fa-pencil w3-margin-right');
+    btn_update.setAttribute('title', 'Update Gateway');
+    btn_update.setAttribute('style', 'cursor:pointer');
+    btn_update.setAttribute('onclick', 'openGwUpdate(this.parentNode.parentNode.id)');
+    btn_delete.setAttribute('class', 'w3-hover-text-blue fa fa-remove');
+    btn_delete.setAttribute('title', 'Delete Gateway');
+    btn_delete.setAttribute('style', 'cursor:pointer');
+    btn_delete.setAttribute('onclick', 'openGwDelete(this.parentNode.parentNode.id)');
+
+    btns.appendChild(btn_update);
+    btns.appendChild(btn_delete);
+    row.appendChild(description);
+    row.appendChild(eui);
+    row.appendChild(location);
+    row.appendChild(btns);
+    row.setAttribute('id', gateways[x].eui);
+    tableBody.appendChild(row);
+  }
+}
+</script>

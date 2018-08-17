@@ -1,0 +1,62 @@
+<div id="add" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:600px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Add Sensor</label>
+      </div>
+      <div class="w3-panel">
+        <form action="/sensors/add" method="POST" autocomplete="off" onsubmit="return addCheck()">
+          <table class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td><b><label class="w3-small">Description</label></b></td>
+              <td><input id="add_description" class="w3-input w3-border" type="text" name="description" placeholder="Description"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Name</label></b></td>
+              <td><input id="add_name" class="w3-input w3-border" type="text" name="name" placeholder="Name" required
+                oninput="setCustomValidity('')"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Code</label></b></td>
+              <td><input id="add_code" class="w3-input w3-border" type="number" name="code" placeholder="1~ 255" min="1" max="255" required
+                oninput="setCustomValidity('')"></td>
+            </tr>
+          </table>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">&nbsp;&nbsp;Add&nbsp;&nbsp;</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('add').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openAdd() {
+  document.getElementById('add_description').value = '';
+  document.getElementById('add_name').value = '';
+  document.getElementById('add_code').value = '';
+  document.getElementById('add').style.display = 'block';
+}
+
+function addCheck() {
+  var n = document.getElementById('add_name');
+  var c = document.getElementById('add_code');
+
+  for (var i in sensors) {
+    if (sensors[i].name != n.value) continue;
+    n.setCustomValidity('이미 등록된 이름입니다.');
+    n.reportValidity();
+    return false;
+  }
+
+  if (sensors[c.value]) {
+    c.setCustomValidity('이미 등록된 코드입니다.');
+    c.reportValidity();
+    return false;
+  }
+
+  document.getElementById('loading').style.display='block'
+  return true;
+}
+</script>

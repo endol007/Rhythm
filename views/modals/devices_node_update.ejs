@@ -1,0 +1,119 @@
+<div id="update" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:700px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Update Node</label>
+      </div>
+      <div class="w3-panel">
+        <form action="/devices/node/update" method="POST" autocomplete="off" onsubmit="document.getElementById('loading').style.display='block'">
+          <table class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td><b><label class="w3-small">Description</label></b></td>
+              <td><input id="update_description" class="w3-input w3-border" type="text" name="description" placeholder="Description"></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Gateway</label></b></td>
+              <td><input id="update_gateway" class="w3-input w3-border w3-light-gray" type="text" name="gateway" disabled></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">EUI</label></b></td>
+              <td><input id="update_eui" class="w3-input w3-border w3-light-gray" type="text" name="eui" readonly></td>
+            </tr>
+            <tr>
+              <td><b><label class="w3-small">Location</label></b></td>
+              <td>
+                <div class="w3-row">
+                  <input id="update_latitude" class="w3-input w3-border" type="text" name="latitude" style="display:none">
+                  <input id="update_longitude" class="w3-input w3-border" type="text" name="longitude" style="display:none">
+                  <input id="update_location" class="w3-input w3-border w3-col" type="text" placeholder="None" readonly style="width:90%">
+                  <a id="update_showmap" class="w3-button w3-border w3-col w3-round fa fa-map-marker" style="width:10%" onclick="displayUpdateMap(true)"></a>
+                  <a id="update_hidemap" class="w3-button w3-border w3-col w3-round fa fa-remove" style="width:10%;display:none" onclick="displayUpdateMap(false)"></a>
+                </div>
+                <div id="update_map" class="w3-border" style="width:100%;height:200px;display:none"></div>
+              </td>
+            </tr>
+          </table>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">Update</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('update').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openUpdate(eui) {
+  var node = nodes[eui];
+  var location = node.location;
+  if (location.lat && location.lng) displayUpdateMap(true, location);
+  else displayUpdateMap(false);
+  document.getElementById('update_description').value = node.description;
+  document.getElementById('update_gateway').value = node.gateway;
+  document.getElementById('update_eui').value = eui;
+  document.getElementById('update').style.display = 'block';
+}
+
+function displayUpdateMap(b, location) {
+  if (!b) {
+    document.getElementById('update_latitude').value = '';
+    document.getElementById('update_longitude').value = '';
+    document.getElementById('update_location').value = '';
+    updateMarker.setPosition(null);
+    updateMap.setCenter({ lat: Number(defaultLocation.lat), lng: Number(defaultLocation.lng) });
+    updateMap.setZoom(16);
+  } else if (location) {
+    document.getElementById('update_latitude').value = location.lat;
+    document.getElementById('update_longitude').value = location.lng;
+    document.getElementById('update_location').value = location.lat + ', ' + location.lng;
+    updateMarker.setPosition({ lat: Number(location.lat), lng: Number(location.lng) });
+    updateMap.setCenter({ lat: Number(location.lat), lng: Number(location.lng) });
+    updateMap.setZoom(17);
+  }
+  document.getElementById('update_showmap').style.display = b ? 'none' : 'block';
+  document.getElementById('update_hidemap').style.display = b ? 'block' : 'none';
+  document.getElementById('update_map').style.display = b ? 'block' : 'none';
+}
+
+function initUpdateMap() {
+  updateMap = new google.maps.Map(document.getElementById("update_map"), {
+    center: { lat: Number(defaultLocation.lat), lng: Number(defaultLocation.lng) },
+    zoom: 16,
+    streetViewControl: false,
+    mapTypeControl: false,
+    scaleControl: true,
+    gestureHandling: 'greedy'
+  });
+
+  updateMarker = new google.maps.Marker({
+      position: null,
+      icon: {
+        url: '/images/icon_node.png',
+        scaledSize: new google.maps.Size(30, 30)
+      },
+      map: updateMap
+  });
+  updateMarker.setDraggable(true);
+
+  google.maps.event.addListener(updateMarker, "dragend", function() {
+    var location = updateMarker.getPosition();
+    var lat = location.lat();
+    var lng = location.lng();
+    document.getElementById('update_latitude').value = lat;
+    document.getElementById('update_longitude').value = lng;
+    document.getElementById('update_location').value = lat + ', ' + lng;
+  });
+
+  google.maps.event.addListener(updateMap, 'click', function(e) {
+    if (updateMarker.getPosition()) return;
+
+    var location = e.latLng;
+    var lat = location.lat();
+    var lng = location.lng();
+    document.getElementById('update_latitude').value = lat;
+    document.getElementById('update_longitude').value = lng;
+    document.getElementById('update_location').value = lat + ', ' + lng;
+    updateMarker.setPosition(location);
+  });
+}
+</script>

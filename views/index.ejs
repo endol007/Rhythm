@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NSS LAB</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  </head>
+  <body class="w3-blue-grey font-arial">
+    <%- include ./modals/loading %>
+    <% if (typeof content != 'undefined') { %>
+      <% if (content == 'maps') { %>
+        <%- include ./modals/maps_option %>
+      <% } else if (content == 'devices') { %>
+        <%- include ./modals/devices_option %>
+        <%- include ./modals/devices_gateways %>
+        <%- include ./modals/devices_gw_add %>
+        <%- include ./modals/devices_gw_update %>
+        <%- include ./modals/devices_gw_delete %>
+        <%- include ./modals/devices_node_add %>
+        <%- include ./modals/devices_node_update %>
+        <%- include ./modals/devices_node_delete %>
+      <% } else if (content == 'sensors') { %>
+        <%- include ./modals/sensor_add %>
+        <%- include ./modals/sensor_update %>
+        <%- include ./modals/sensor_delete %>
+      <% } else if (content == 'charts') { %>
+        <%- include ./modals/chart_add %>
+        <%- include ./modals/chart_delete %>
+      <% } %>
+    <% } %>
+    <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
+      <div class="w3-container w3-margin-top">
+        <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
+      </div>
+      <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
+        <div class="w3-bar w3-padding-small">
+          <a id="link_maps" href="/" class="w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-map-o w3-margin-right" style="text-decoration:none"> Maps</a>
+          <a id="link_devices" href="/devices" class="w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-signal w3-margin-right" style="text-decoration:none"> Devices</a>
+          <a id="link_sensors" href="/sensors" class="w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-thermometer-3 w3-margin-right" style="text-decoration:none"> Sensors</a>
+          <a id="link_charts" href="/charts" class="w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-line-chart w3-margin-right" style="text-decoration:none"> Charts</a>
+          <a href="/realtime" class="w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-clock-o" target="_blank" style="text-decoration:none"> Real-time</a>
+          <a href="/logout" class="w3-bar-item w3-hover-text-white w3-text-light-gray w3-round w3-padding-small fa w3-right" style="text-decoration:none">Log Out</a>
+        </div>
+      </div>
+      <div id="message" class="w3-container w3-card-4 w3-round w3-margin-right" style="display:none;">
+        <h style="text-shadow: 2px 2px black;"></h>
+        <a class="w3-text-light-gray w3-hover-text-white w3-round w3-right w3-padding-small fa fa-close" style="text-shadow:2px 2px black;cursor:pointer" onclick="this.parentNode.style.display='none'"></a>
+      </div>
+      <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
+        <% if (typeof content != 'undefined') { %>
+          <% if (content == 'maps') { %>
+            <%- include ./contents/maps %>
+          <% } else if (content == 'devices') { %>
+            <%- include ./contents/devices %>
+          <% } else if (content == 'sensors') { %>
+            <%- include ./contents/sensors %>
+          <% } else if (content == 'charts') { %>
+            <%- include ./contents/charts %>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+    <footer class="margin-a">
+      <%- include ./footer %>
+    </footer>
+    <script>
+    document.getElementById('link_<%= content %>').classList.add('w3-text-blue');
+
+    <% if (typeof msg != 'undefined' && msg != '') { %>
+      alertMessage('<%= msg %>');
+    <% } else if (typeof errmsg != 'undefined' && errmsg != '') { %>
+      alertMessage('<%= errmsg %>', 'error');
+    <% } %>
+
+    function alertMessage(msg, type) {
+      var message = document.getElementById('message');
+
+      if (type == 'error') {
+        message.classList.remove('w3-green');
+        message.classList.add('w3-red');
+      } else {
+        message.classList.remove('w3-red');
+        message.classList.add('w3-green');
+      }
+      message.firstElementChild.innerHTML = msg;
+      message.style.display = 'block';
+    }
+    </script>
+    <% if (typeof content != 'undefined') { %>
+      <% if (content == 'maps' || content == 'devices') { %>
+        <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVUBGKZVimnMyE9KX2qucLBnATooZQL8g&callback=initMap">
+        </script>
+      <% } %>
+    <% } %>
+  </body>
+</html>

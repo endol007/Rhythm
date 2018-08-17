@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NSS LAB</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="w3-blue-grey font-arial">
+    <div class="w3-container w3-card-4 w3-light-grey w3-round-xlarge margin-b">
+      <div class="w3-container w3-margin-top">
+        <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:20px;">NSS LAB</label>
+      </div>
+      <% if (typeof errmsg != 'undefined' && errmsg != '') { %>
+        <div class="w3-container w3-card-4 w3-red w3-round w3-margin-right">
+          <h style="text-shadow: 2px 2px black;"><%= errmsg %></h>
+          <a class="w3-text-light-gray w3-hover-text-white w3-round w3-right w3-padding-small fa fa-close" style="text-shadow:2px 2px black;cursor:pointer" onclick="this.parentNode.style.display='none'"></a>
+        </div>
+      <% } %>
+      <div class="w3-container w3-card-2 w3-white w3-round-large w3-section w3-margin-right">
+        <form action="/auth" method="POST" autocomplete="off">
+          <p><b>Please log in</b></p>
+          <p>
+            <input id="id" class="w3-input w3-border" type="text" name="id" required>
+            <label class="w3-label w3-validate">ID</label></p>
+          <p>
+            <input class="w3-input w3-border" type="password" name="passwd" required>
+            <label class="w3-label w3-validate">PASSWORD</label></p>
+          <p><button id="btn" class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">Log In</button></p>
+        </form>
+      </div>
+    </div>
+    <footer class="margin-b">
+      <%- include ./footer %>
+    </footer>
+  </body>
+</html>

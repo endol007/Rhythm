@@ -1,0 +1,24 @@
+<div id="delete" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:500px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-section w3-display-container">
+        <form action="/charts/delete" method="POST" onsubmit="document.getElementById('loading').style.display='block'">
+          <div class="w3-panel">
+            <h class="w3-text-red" style="text-shadow: 1px 1px black;">Chart data will be deleted, are you sure?</h>
+            <input id="delete_id" class="w3-input" type="text" name="id" style="display:none;">
+          </div>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">&nbsp;&nbsp;&nbsp;Ok&nbsp;&nbsp;&nbsp;</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('delete').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openDelete(id) {
+  document.getElementById('delete_id').value = id;
+  document.getElementById('delete').style.display = 'block';
+}
+</script>

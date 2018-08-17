@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NSS LAB</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+    <script src=/javascripts/static.highcharts.js></script>
+  </head>
+  <body class="w3-blue-grey font-arial">
+    <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
+      <div class="w3-container w3-margin-top">
+        <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
+      </div>
+      <div id="message" class="w3-container w3-card-4 w3-round w3-margin-right" style="display:none;">
+        <h style="text-shadow: 2px 2px black;"></h>
+        <a class="w3-text-light-gray w3-hover-text-white w3-round w3-right w3-padding-small fa fa-close" style="text-shadow:2px 2px black;cursor:pointer" onclick="this.parentNode.style.display='none'"></a>
+      </div>
+      <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
+        <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+          <div class="w3-panel">
+            <div id="chart" class="w3-border" style="width:100%;height:400px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="margin-a">
+      <%- include ./footer %>
+    </footer>
+    <script>
+    <% if (typeof chart != 'undefined' && typeof sensors != 'undefined' && typeof data != 'undefined') { %>
+      dataProcess(JSON.parse('<%- chart %>'), JSON.parse('<%- sensors %>'), JSON.parse('<%- data %>'))
+      .then(drawChart)
+      .catch(function(err) {
+        if (err == 'Data not found.') drawEmpty();
+        alertMessage(err, 'error');
+      });
+    <% } else { %>
+      drawEmpty();
+    <% } %>
+
+    <% if (typeof msg != 'undefined' && msg != '') { %>
+      alertMessage('<%= msg %>');
+    <% } else if (typeof errmsg != 'undefined' && errmsg != '') { %>
+      alertMessage('<%= errmsg %>', 'error');
+    <% } %>
+
+    function alertMessage(msg, type) {
+      var message = document.getElementById('message');
+
+      if (type == 'error') {
+        message.classList.remove('w3-green');
+        message.classList.add('w3-red');
+      } else {
+        message.classList.remove('w3-red');
+        message.classList.add('w3-green');
+      }
+      message.firstElementChild.innerHTML = msg;
+      message.style.display = 'block';
+    }
+    </script>
+  </body>
+</html>

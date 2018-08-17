@@ -1,0 +1,57 @@
+<div id="option" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:600px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Update Option</label>
+      </div>
+      <div class="w3-panel">
+        <form action="/option/update" method="POST" autocomplete="off" onsubmit="return updateOptionCheck()">
+          <table class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td><b><label class="w3-small">Default Location</label></b></td>
+              <td>
+                <div class="w3-row">
+                  <input id="option_latitude" class="w3-input w3-border" type="text" name="latitude" placeholder="Latitude" required oninput="setCustomValidity('')">
+                  <input id="option_longitude" class="w3-input w3-border" type="text" name="longitude" placeholder="Longitude" required oninput="setCustomValidity('')">
+              </td>
+            </tr>
+          </table>
+          <div class="w3-panel">
+            <button class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round">Update</button>
+            <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('option').style.display='none'">Cancle</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openOption() {
+  document.getElementById('option_latitude').value = defaultLocation.lat;
+  document.getElementById('option_longitude').value = defaultLocation.lng;
+  document.getElementById('option').style.display = 'block';
+}
+
+function updateOptionCheck() {
+  var opt_lat = document.getElementById('option_latitude');
+  var opt_lng = document.getElementById('option_longitude');
+  var lat = Number(opt_lat.value);
+  var lng = Number(opt_lng.value);
+
+  if (isNaN(lat) || lat < -90 || lat > 90) {
+    opt_lat.setCustomValidity('정확한 위도 값을 입력해주세요.');
+    opt_lat.reportValidity();
+    return false;
+  }
+
+  if (isNaN(lng) || lng < -180 || lng > 180) {
+    opt_lng.setCustomValidity('정확한 경도 값을 입력해주세요.');
+    opt_lng.reportValidity();
+    return false;
+  }
+
+
+  document.getElementById('loading').style.display = 'block';
+  return true;
+}
+</script>

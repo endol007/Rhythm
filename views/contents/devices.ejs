@@ -1,0 +1,121 @@
+<div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+  <div class="w3-panel">
+    <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Devices</label>
+    <div class="w3-right">
+      <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-cloud" style="cursor:pointer;" onclick="document.getElementById('gateways').style.display = 'block'"> Gateways</a>
+      <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-gear" style="cursor:pointer;" onclick="openOption()"> Option</a>
+      <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-refresh" style="cursor:pointer;" onclick="javascript:window.location.reload()"> Refresh</a>
+    </div>
+  </div>
+  <div class="w3-panel">
+    <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
+      <tr>
+        <th>Description</th>
+        <th>EUI</th>
+        <th>RSSI</th>
+        <th>Joined</th>
+        <th>Last in</th>
+        <th>Interval</th>
+        <th class="w3-right w3-margin-right"><a class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
+      </tr>
+      <tr>
+        <td>No data available in table</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+</div>
+<script>
+<% if (typeof options != 'undefined') { %>
+  defaultLocation = JSON.parse('<%- options %>');
+<% } %>
+
+function initMap() {
+  initGwAddMap();
+  initGwUpdateMap();
+  initAddMap();
+  initUpdateMap();
+}
+
+<% if (typeof nodes != 'undefined') { %>
+  nodes = JSON.parse('<%- nodes %>');
+  createNodesTable();
+<% } %>
+
+function createNodesTable() {
+  if (!Object.keys(nodes).length) return;
+
+  var now = new Date();
+  var tableBody = document.getElementById('table_nodes').firstElementChild;
+  tableBody.removeChild(tableBody.children[1]);
+
+  for (var x in nodes) {
+    var row = document.createElement('tr');
+    var description = document.createElement('td');
+    var eui = document.createElement('td');
+    var rssi = document.createElement('td');
+    var solar = document.createElement('td');
+    var joined = document.createElement('td');
+    var last_in = document.createElement('td');
+    var interval = document.createElement('td');
+    var btns = document.createElement('td');
+    var btn_edit = document.createElement('a');
+    var btn_delete = document.createElement('a');
+
+    description.innerHTML = nodes[x].description ? nodes[x].description : '-';
+    description.setAttribute('style', 'width:300px;');
+    eui.innerHTML = nodes[x].eui;
+    rssi.innerHTML = nodes[x].rssi ? nodes[x].rssi : '-';
+    solar.innerHTML = nodes[x].solar ? nodes[x].solar : '+';
+    var joined_secs = (now - new Date(nodes[x].joined)) / 1000;
+    joined.innerHTML = timeString(joined_secs) + ' ago';
+    var last_in_secs = nodes[x].last_in ? (now - new Date(nodes[x].last_in)) / 1000 : '';
+    last_in.innerHTML = last_in_secs ? timeString(last_in_secs) + ' ago' : '-';
+    interval.innerHTML = nodes[x].interval ? timeString(nodes[x].interval) : '-';
+    btns.setAttribute('class', 'w3-right w3-margin-right');
+    btn_edit.setAttribute('class', 'w3-hover-text-blue fa fa-pencil w3-margin-right');
+    btn_edit.setAttribute('title', 'Update Node');
+    btn_edit.setAttribute('style', 'cursor:pointer');
+    btn_edit.setAttribute('onclick', 'openUpdate(this.parentNode.parentNode.id)');
+    btn_delete.setAttribute('class', 'w3-hover-text-blue fa fa-remove');
+    btn_delete.setAttribute('title', 'Delete Node');
+    btn_delete.setAttribute('style', 'cursor:pointer');
+    btn_delete.setAttribute('onclick', 'openDelete(this.parentNode.parentNode.id)');
+
+    btns.appendChild(btn_edit);
+    btns.appendChild(btn_delete);
+    row.appendChild(description);
+    row.appendChild(eui);
+    row.appendChild(rssi);
+    row.appendChild(solar);
+    row.appendChild(joined);
+    row.appendChild(last_in);
+    row.appendChild(interval);
+    row.appendChild(btns);
+    row.setAttribute('id', x);
+    tableBody.appendChild(row);
+  }
+}
+
+function timeString(t) {
+  var name = [' sec', ' min', ' hr', ' day', ' month', ' year'];
+  var value = [1, 60, 60, 24, 30, 12, 1];
+
+  t = Math.abs(t);
+  var i, j;
+  for (i = 0; i < 6; i++) {
+    if (t < value[i]) break;
+    t /= value[i];
+  }
+
+  j = i == 0 ? i : i - 1;
+  t = ((j == 0 && t < 1) || j == 4 || j == 5) ? t.toFixed(2) : t.toFixed(0);
+
+  return t + name[j] + (t != 1 ? 's' : '');
+}
+</script>

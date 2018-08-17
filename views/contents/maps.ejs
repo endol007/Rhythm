@@ -1,0 +1,102 @@
+<div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+  <div class="w3-panel">
+    <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Maps</label>
+    <div class="w3-right">
+      <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-gear" style="cursor:pointer;" onclick="openOption()"> Option</a>
+      <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-refresh" style="cursor:pointer;" onclick="javascript:window.location.reload()"> Refresh</a>
+    </div>
+  </div>
+  <div class="w3-panel">
+    <div id="map" class="w3-border" style="width:100%;height:400px;"></div>
+  </div>
+</div>
+<script>
+<% if (typeof options != 'undefined') { %>
+  defaultLocation = JSON.parse('<%- options %>');
+<% } %>
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: Number(defaultLocation.lat), lng: Number(defaultLocation.lng) },
+    zoom: 16,
+    streetViewControl: false,
+    mapTypeControl: false,
+    scaleControl: true,
+    gestureHandling: 'greedy'
+  });
+
+  <% if (typeof gateways != 'undefined') { %>
+    addGatewaysMarker(JSON.parse('<%- gateways %>'));
+  <% } %>
+
+  <% if (typeof nodes != 'undefined') { %>
+    addNodesMarker(JSON.parse('<%- nodes %>'));
+  <% } %>
+}
+
+function addGatewaysMarker(gateways) {
+  for (var x in gateways) {
+    var location = gateways[x].location;
+
+    if (!location.lat || !location.lng) continue;
+
+    var infoWindow = new google.maps.InfoWindow();
+    var contentString = '<div><table class="w3-table w3-bordered w3-small font-arial">' +
+      '<tr><td><b class="w3-tag w3-margin-right">GW</b><b class="w3-right">EUI:</b></td><td>' + gateways[x].eui + '</td></tr>' +
+      '<tr><td><b class="w3-right">Description:</b></td><td>' +
+      (gateways[x].description ? gateways[x].description : '-') + '</td></tr>' +
+      '</table></div>';
+
+    var marker = new google.maps.Marker({
+      position: { lat: Number(location.lat), lng: Number(location.lng) },
+      icon: {
+        url: '/images/icon_gateway.png',
+        scaledSize: new google.maps.Size(30, 30)
+      },
+      map: map,
+      content: contentString
+    });
+    google.maps.event.addListener(marker, 'mouseover', function () {
+      infoWindow.setContent(this.content);
+      infoWindow.open(this.getMap(), this);
+    });
+    google.maps.event.addListener(marker, 'mouseout', function () {
+      infoWindow.close();
+    });
+  }
+}
+
+function addNodesMarker(nodes) {
+  for (var x in nodes) {
+    var location = nodes[x].location;
+
+    if (!location.lat || !location.lng) continue;
+
+    var infoWindow = new google.maps.InfoWindow();
+    var contentString = '<div><table class="w3-table w3-bordered w3-small font-arial">' +
+      '<tr><td><b class="w3-tag w3-margin-right">Node</b><b class="w3-right">EUI:</b></td><td>' + nodes[x].eui + '</td></tr>' +
+      '<tr><td><b class="w3-right">Description:</b></td><td>' +
+      (nodes[x].description ? nodes[x].description : '-' ) + '</td></tr>' +
+      '<tr><td><b class="w3-right">RSSI:</b></td><td>' +
+      (nodes[x].rssi ? nodes[x].rssi : '-') + '</td></tr>' +
+      '</table></div>';
+
+    var marker = new google.maps.Marker({
+      position: { lat: Number(location.lat), lng: Number(location.lng) },
+      icon: {
+        url: '/images/icon_node.png',
+        scaledSize: new google.maps.Size(30, 30)
+      },
+      map: map,
+      content: contentString
+    });
+    google.maps.event.addListener(marker, 'mouseover', function () {
+      infoWindow.setContent(this.content);
+      infoWindow.open(this.getMap(), this);
+    });
+    google.maps.event.addListener(marker, 'mouseout', function () {
+      infoWindow.close();
+    });
+  }
+}
+</script>

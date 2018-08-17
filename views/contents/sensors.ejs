@@ -1,0 +1,67 @@
+<div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+  <div class="w3-panel">
+    <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Sensors</label>
+    <a class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-refresh w3-right" style="cursor:pointer;" onclick="javascript:window.location.reload()"> Refresh</a>
+  </div>
+  <div class="w3-panel">
+    <table id="table_sensors" class="w3-table w3-border w3-bordered w3-white w3-small">
+      <tr>
+        <th>Description</th>
+        <th>Name</th>
+        <th>Code</th>
+        <th class="w3-right w3-margin-right"><a class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Sensor" onclick="openAdd()"></a></th>
+      </tr>
+      <tr>
+        <td>No data available in table</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+</div>
+<script>
+<% if (typeof sensors != 'undefined') { %>
+  sensors = JSON.parse('<%- sensors %>');
+  createTable();
+<% } %>
+
+function createTable() {
+  if (!Object.keys(sensors).length) return;
+
+  var tableBody = document.getElementById('table_sensors').firstElementChild;
+  tableBody.removeChild(tableBody.children[1]);
+
+  for (var x in sensors) {
+    var row = document.createElement('tr');
+    var description = document.createElement('td');
+    var name = document.createElement('td');
+    var code = document.createElement('td');
+    var btns = document.createElement('td');
+    var btn_edit = document.createElement('a');
+    var btn_delete = document.createElement('a');
+
+    description.innerHTML = sensors[x].description ? sensors[x].description : '-';
+    name.innerHTML = sensors[x].name;
+    code.innerHTML = sensors[x].code;
+    btns.setAttribute('class', 'w3-right w3-margin-right');
+    btn_edit.setAttribute('class', 'w3-hover-text-blue fa fa-pencil w3-margin-right');
+    btn_edit.setAttribute('title', 'Update Sensor');
+    btn_edit.setAttribute('style', 'cursor:pointer');
+    btn_edit.setAttribute('onclick', 'openUpdate(this.parentNode.parentNode.id)');
+    btn_delete.setAttribute('class', 'w3-hover-text-blue fa fa-remove');
+    btn_delete.setAttribute('title', 'Delete Sensor');
+    btn_delete.setAttribute('style', 'cursor:pointer');
+    btn_delete.setAttribute('onclick', 'openDelete(this.parentNode.parentNode.id)');
+
+    btns.appendChild(btn_edit);
+    btns.appendChild(btn_delete);
+    row.appendChild(description);
+    row.appendChild(name);
+    row.appendChild(code);
+    row.appendChild(btns);
+    row.setAttribute('id', x);
+    tableBody.appendChild(row);
+  }
+}
+</script>
