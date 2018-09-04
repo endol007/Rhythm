@@ -1,0 +1,65 @@
+<div id="download" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:500px;">
+      <div class="w3-container w3-padding">
+        <i class="w3-hover-text-blue w3-large w3-round-large w3-right fa fa-close" style="cursor:pointer;" onclick="document.getElementById('download').style.display='none'"></i>
+        <div class="w3-panel">
+          <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Download</label>
+        </div>
+        <div class="w3-panel">
+          <table id="table_download" class="w3-table w3-border w3-bordered w3-white">
+            <tr>
+              <td style="text-align:center">No data to download</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  function openDownload() {
+    document.getElementById('download').style.display = 'block';
+    var tableBody = document.getElementById('table_download').firstElementChild;
+    var prefix = document.getElementById('options_prefix').value;
+    while (tableBody.children.length > 1) {
+      tableBody.removeChild(tableBody.children[1]);
+    }
+    if (!Object.keys(nodes).length) {
+      tableBody.children[0].style.display = 'table-row';
+      return;
+    }
+    tableBody.children[0].style.display = 'none';
+    for (var x in nodes) {
+      var row = document.createElement('tr');
+      var eui = document.createElement('td');
+      var btn = document.createElement('td');
+      var btn_download = document.createElement('a');
+      eui.innerHTML = x;
+      btn_download.setAttribute('class', 'w3-hover-text-blue fa fa-download');
+      btn_download.setAttribute('title', 'Download the Data');
+      btn_download.setAttribute('style', 'cursor:pointer;text-decoration:none');
+      btn_download.setAttribute('href', dataString(x));
+      btn_download.setAttribute('download', (prefix ? prefix + '_' : '') + x + '.txt');
+      btn.appendChild(btn_download);
+      row.appendChild(eui);
+      row.appendChild(btn);
+      tableBody.appendChild(row);
+    }
+  }
+  function dataString(eui) {
+    var dataStr = 'data:text/json;charset=utf-8,';
+    for (var x in nodes[eui].data) {
+      var data = nodes[eui].data[x];
+      for (var i in data) {
+        dataStr += data[i].rssi + ', ';
+        dataStr += data[i].lsnr + ', ';
+        dataStr += data[i].seqn + ', ';
+        dataStr += data[i].solar + ', ';
+        dataStr += data[i].interval + '\n';
+      }
+      for (var i = 0; i < (count ? count : 0) - data.length; i++) {
+        dataStr += '0, 0, 0, 0\n';
+      }
+    }
+    return dataStr;
+  }
+  </script>
