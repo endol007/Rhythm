@@ -1,0 +1,60 @@
+<div id="add" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-light-gray w3-round-large w3-animate-top" style="max-width:500px;">
+    <div class="w3-container w3-padding">
+      <div class="w3-panel">
+        <label class="w3-label w3-text-black" style="font-weight:bold;font-size:16px;">Add Node</label>
+      </div>
+      <div class="w3-panel">
+        <table class="w3-table w3-border w3-bordered w3-white">
+          <tr>
+            <td><b><label class="w3-small">EUI</label></b></td>
+            <td><input id="add_eui" class="w3-input w3-border" type="text" placeholder="00-00-00-00-00-00-00-00" autocomplete="off" required
+              pattern="^([0-9a-f]{2}[:-]){7}([0-9a-f]{2})$" onkeyup="if(event.keyCode == '13')addNode()"></td>
+          </tr>
+        </table>
+        <div class="w3-panel">
+          <a class="w3-button w3-border w3-blue w3-hover-shadow w3-hover-indigo w3-round" onclick="addNode()">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+          <a class="w3-button w3-border w3-hover-shadow w3-round w3-right" onclick="document.getElementById('add').style.display='none'">Cancle</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openAdd() {
+  document.getElementById('add_eui').value = '';
+  document.getElementById('add').style.display = 'block';
+}
+
+function addNode() {
+  var x = document.getElementById('add_eui');
+  var eui = x.value;
+
+  if (!x.checkValidity() || nodes[eui]) {
+    x.setCustomValidity(nodes[eui] ? '이미 등록되었습니다.' : '');
+    x.reportValidity();
+    return;
+  }
+
+  nodes[eui] = {
+    currentDatr: '',
+    data: {},
+    last_in: '',
+    interval: 0,
+    rssi: {
+      max: 0,
+      min: 0,
+      avg: 0
+    },
+    lsnr: {
+      max: 0,
+      min: 0,
+      avg: 0
+    }
+  };
+
+  document.getElementById('add').style.display = 'none';
+  addSeries(eui);
+  refreshTable();
+}
+</script>
