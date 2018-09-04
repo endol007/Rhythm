@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NSS LAB</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src=/javascripts/realtime.highcharts.js></script>
+    <script src=/javascripts/realtime.io.js></script>
+  </head>
+  <body class="w3-blue-grey font-arial">
+    <%- include ./modals/realtime_play %>
+    <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
+      <div class="w3-container w3-margin-top">
+        <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
+      </div>
+      <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
+        <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+          <div class="w3-panel">
+            <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Real-time</label>
+            <div class="w3-right">
+              <a id="btn_play" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-play" title="Start Receive Data" style="cursor:pointer;" onclick="openPlay()"> Start</a>
+            </div>
+          </div>
+          <div class="w3-panel">
+            <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
+              <tr>
+                <th>EUI</th>
+                <th>Data rate</th>
+                <th>Count</th>
+                <th>RSSI (Max, Min, Avg)</th>
+                <th>SNR (Max, Min, Avg)</th>
+                <th>Solar(Max, Min, Avg)</th>
+                <th>Interval</th>
+                <th class="w3-right w3-margin-right"><a id="btn_add" class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
+              </tr>
+              <tr>
+                <td>No data available in table</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+          <div class="w3-panel w3-bar">
+            <a class="link w3-bar-item w3-border w3-text-blue w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'rssi')">RSSI</a>
+            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'lsnr')">SNR</a>
+            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'interval')">Interval</a>
+            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small" style="cursor:pointer" onclick="openChart(event, 'solar')">solar</a>
+          </div>
+          <div class="w3-panel">
+            <div id="rssi" class="chart w3-border" style="width:100%;height:400px;"></div>
+            <div id="lsnr" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
+            <div id="interval" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
+            <div id="solar" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="margin-a">
+      <%- include ./footer %>
+    </footer>
+    <script>
+    init();
+
+    function init() {
+      isPlay = false;
+      document.getElementById('options_count').value = count = 100;
+      drawChart('rssi');
+      drawChart('lsnr');
+      drawChart('interval');
+      drawChart('solar');
+    }
+
+    function openChart(evt, id) {
+      var tabs = document.getElementsByClassName('chart');
+      var links = document.getElementsByClassName('link');
+
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+      }
+      for (var i = 0; i < links.length; i++) {
+        links[i].classList.remove('w3-text-blue');
+      }
+
+      document.getElementById(id).style.display = '';
+      evt.currentTarget.classList.add('w3-text-blue');
+    }
+
+    function refreshTable() {
+      var tableBody = document.getElementById('table_nodes').firstElementChild;
+      var prefix = document.getElementById('options_prefix').value;
+
+      while (tableBody.children.length > 2) {
+        tableBody.removeChild(tableBody.children[2]);
+      }
+
+      if (!Object.keys(nodes).length) {
+        tableBody.children[1].style.display = 'table-row';
+        return;
+      }
+
+      tableBody.children[1].style.display = 'none';
+      for (var x in nodes) {
+        var row = document.createElement('tr');
+        var eui = document.createElement('td');
+        var datarate = document.createElement('td');
+        var count = document.createElement('td');
+        var rssi = document.createElement('td');
+        var rssi_max = document.createElement('a');
+        var rssi_min = document.createElement('a');
+        var rssi_avg = document.createElement('a');
+        var lsnr = document.createElement('td');
+        var lsnr_max = document.createElement('a');
+        var lsnr_min = document.createElement('a');
+        var lsnr_avg = document.createElement('a');
+        var interval = document.createElement('td');
+        var solar = document.createElement('td');
+        var solar_max = document.createElement('a');
+        var solar_min = document.createElement('a');
+        var solar_avg = document.createElement('a');
+        var btns = document.createElement('td');
+        var btn_download = document.createElement('a');
+        var btn_play = document.createElement('a');
+        var btn_pause = document.createElement('a');
+        var btn_delete = document.createElement('a');
+
+        eui.innerHTML = x;
+        var datr = nodes[x].currentDatr;
+        datarate.innerHTML = datr ? datr : '-';
+        count.innerHTML = datr ? nodes[x].data[datr].length : '-';
+        rssi.setAttribute('class', 'w3-row');
+        rssi_max.setAttribute('class', 'w3-col w3-third');
+        rssi_max.innerHTML = nodes[x].rssi.max ? nodes[x].rssi.max : '-';
+        rssi_min.setAttribute('class', 'w3-col w3-third');
+        rssi_min.innerHTML = nodes[x].rssi.min ? nodes[x].rssi.min : '-';
+        rssi_avg.setAttribute('class', 'w3-col w3-third');
+        rssi_avg.innerHTML = nodes[x].rssi.avg ? nodes[x].rssi.avg : '-';
+        lsnr.setAttribute('class', 'w3-row');
+        lsnr_max.setAttribute('class', 'w3-col w3-third');
+        lsnr_max.innerHTML = nodes[x].lsnr.max ? nodes[x].lsnr.max : '-';
+        lsnr_min.setAttribute('class', 'w3-col w3-third');
+        lsnr_min.innerHTML = nodes[x].lsnr.min ? nodes[x].lsnr.min : '-';
+        lsnr_avg.setAttribute('class', 'w3-col w3-third');
+        lsnr_avg.innerHTML = nodes[x].lsnr.avg ? nodes[x].lsnr.avg : '-';
+        solar.setAttribute('class', 'w3-row');
+        solar_max.setAttribute('class', 'w3-col w3-third');
+        solar_max.innerHTML = nodes[x].solar.max ? nodes[x].lsnr.max : '-';
+        solar_min.setAttribute('class', 'w3-col w3-third');
+        solar_min.innerHTML = nodes[x].solar.min ? nodes[x].lsnr.min : '-';
+        solar_avg.setAttribute('class', 'w3-col w3-third');
+        solar_avg.innerHTML = nodes[x].solar.avg ? nodes[x].lsnr.avg : '-';
+        interval.innerHTML = nodes[x].interval ? nodes[x].interval.toFixed(2) + ' s' : '-';
+        btns.setAttribute('class', 'w3-right w3-margin-right');
+        btn_delete.setAttribute('class', 'w3-hover-text-blue fa fa-remove');
+        btn_delete.setAttribute('title', 'Delete Node');
+        btn_delete.setAttribute('style', 'cursor:pointer');
+        btn_delete.setAttribute('onclick', 'openDelete(this.parentNode.parentNode.id)');
+        btn_delete.style.display = isPlay ? 'none' : 'inline-block';
+
+        rssi.appendChild(rssi_max);
+        rssi.appendChild(rssi_min);
+        rssi.appendChild(rssi_avg);
+        lsnr.appendChild(lsnr_max);
+        lsnr.appendChild(lsnr_min);
+        lsnr.appendChild(lsnr_avg);
+        solar.appendChild(solar_max);
+        solar.appendChild(solar_min);
+        solar.appendChild(solar_avg);
+        btns.appendChild(btn_delete);
+        row.appendChild(eui);
+        row.appendChild(datarate);
+        row.appendChild(count);
+        row.appendChild(rssi);
+        row.appendChild(lsnr);
+        row.appendChild(interval);
+        row.appendChild(solar);
+        row.appendChild(btns);
+        row.setAttribute('id', x);
+        tableBody.appendChild(row);
+      }
+    }
+
+    function updateTable(eui) {
+      var row = document.getElementById(eui);
+      var rssi = row.children[3];
+      var lsnr = row.children[4];
+      var solar = row.children[6];
+      var datr = nodes[eui].currentDatr;
+
+      if (row.children[1].innerHTML != datr) row.children[1].innerHTML = datr;
+      row.children[2].innerHTML = nodes[eui].data[datr].length;
+      rssi.children[0].innerHTML = nodes[eui].rssi.max;
+      rssi.children[1].innerHTML = nodes[eui].rssi.min;
+      rssi.children[2].innerHTML = nodes[eui].rssi.avg;
+      lsnr.children[0].innerHTML = nodes[eui].lsnr.max;
+      lsnr.children[1].innerHTML = nodes[eui].lsnr.min;
+      lsnr.children[2].innerHTML = nodes[eui].lsnr.avg;
+      solar.children[0].innerHTML = nodes[eui].solar.max;
+      solar.children[1].innerHTML = nodes[eui].solar.min;
+      solar.children[2].innerHTML = nodes[eui].solar.avg;
+      row.children[5].innerHTML = nodes[eui].interval.toFixed(2) + ' s';
+    }
+    </script>
+  </body>
+</html>
