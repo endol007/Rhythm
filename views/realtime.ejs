@@ -15,6 +15,7 @@
   <body class="w3-blue-grey font-arial">
     <%- include ./modals/realtime_play %>
     <%- include ./modals/realtime_download %>
+    <%- include ./modals/realtime_options %>
     <%- include ./modals/realtime_add %>
     <%- include ./modals/realtime_delete %>
     <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
@@ -27,7 +28,9 @@
             <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Real-time</label>
             <div class="w3-right">
               <a id="btn_play" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-play" title="Start Receive Data" style="cursor:pointer;" onclick="openPlay()"> Start</a>
+              <a id="btn_stop" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-stop" title="Stop Receive Data" style="cursor:pointer;display:none;" onclick="receiveStart(false)"> Stop</a>
               <a id="btn_data" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-list-ul" title="Display Data List" style="cursor:pointer;" onclick="openDownload()"> Data</a>
+              <a id="btn_options" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-gear" style="cursor:pointer;" onclick="openOptions()"> Options</a>
             </div>
           </div>
           <div class="w3-panel">
