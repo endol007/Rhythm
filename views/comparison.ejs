@@ -12,3 +12,29 @@
     <script src=/javascripts/realtime.highcharts.js></script>
     <script src=/javascripts/realtime.io.js></script>
   </head>
+  <body class="w3-blue-grey font-arial">
+      <div class="w3-panel">
+          <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
+            <tr>
+              <th>EUI</th>
+              <th>Data rate</th>
+              <th>Count</th>
+              <th>RSSI (Max, Min, Avg)</th>
+              <th>SNR (Max, Min, Avg)</th>
+              <th>Solar(Max, Min, Avg)</th>
+              <th>Interval</th>
+              <th class="w3-right w3-margin-right"><a id="btn_add" class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
+            </tr>
+            <tr>
+              <td>No data available in table</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+  </body>
+  </html>
