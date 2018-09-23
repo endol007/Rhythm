@@ -65,10 +65,7 @@
           <div class="w3-panel">
             <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
               <tr>
-                <th>Solar Radiation data</th>
-                <th>Solar(Max, Min, Avg)</th>
-                <th class="w3-right w3-margin-right"><a id="btn_add" class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
-              </tr>
+                </tr>
               <tr>
                 <td>No data available in table</td>
                 <td></td>
@@ -84,6 +81,38 @@
         
       </div>
     </div>
+    <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
+        <div class="w3-container w3-margin-top">
+          <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
+        </div>
+        <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
+          <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
+            <div class="w3-panel">
+              <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Raspberry Pi</label>
+            </div>
+            <div class="w3-panel">
+              <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
+                <tr>
+                  <th>Solar(Max, Min, Avg)</th>
+                  <th>Solar Radiation data</th>
+                  <th>DC전압</th>
+                  <th>DC전류</th>
+                  </tr>
+                <tr>
+                  <td>No data available in table</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+      </div>
   <script>
   init();
   function init(){
