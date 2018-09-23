@@ -17,7 +17,6 @@
     <%- include ./modals/realtime_download %>
     <%- include ./modals/realtime_add %>
     <%- include ./modals/realtime_delete %>
-    <%- include ./modals/realtime_options %>
     <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
       <div class="w3-container w3-margin-top">
         <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
@@ -25,23 +24,18 @@
       <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
         <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
           <div class="w3-panel">
-            <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Real-time</label>
-            <div class="w3-right">
-              <a id="btn_play" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-play" title="Start Receive Data" style="cursor:pointer;" onclick="openPlay()"> Start</a>
-              <a id="btn_stop" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-list-ul" title="Stop Receive Data" style="cursor:pointer;" onclick="receiveStart(false)()"> Stop</a>
-              <a id="btn_data" class="w3-border w3-hover-text-blue w3-round w3-padding-small fa fa-list-ul" title="Display Data List" style="cursor:pointer;" onclick="openDownload()"> Data</a>
-            </div>
+            <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">LoRa Data</label>
           </div>
           <div class="w3-panel">
             <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
               <tr>
-                <th>EUI</th>
-                <th>Data rate</th>
-                <th>Count</th>
-                <th>RSSI (Max, Min, Avg)</th>
-                <th>SNR (Max, Min, Avg)</th>
-                <th>Solar(Max, Min, Avg)</th>
-                <th>Interval</th>
+                  <th>EUI</th>
+                  <th>Data rate</th>
+                  <th>Count</th>
+                  <th>RSSI (Max, Min, Avg)</th>
+                  <th>SNR (Max, Min, Avg)</th>
+                  <th>Solar(Max, Min, Avg)</th>
+                  <th>Interval</th>
                 <th class="w3-right w3-margin-right"><a id="btn_add" class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
               </tr>
               <tr>
@@ -56,20 +50,38 @@
             </table>
           </div>
         </div>
+        
+      </div>
+    </div>
+    <div class="w3-container w3-card-4 w3-light-gray w3-round-xlarge margin-a">
+      <div class="w3-container w3-margin-top">
+        <label class="w3-label w3-text-blue-gray w3-wide" style="font-weight:bold;font-size:32px;">NSS LAB</label>
+      </div>
+      <div class="w3-container w3-card-2 w3-gray w3-round-large w3-section w3-margin-right">
         <div class="w3-container w3-card-2 w3-light-gray w3-round-large w3-section w3-padding w3-margin-right">
-          <div class="w3-panel w3-bar">
-            <a class="link w3-bar-item w3-border w3-text-blue w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'rssi')">RSSI</a>
-            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'lsnr')">SNR</a>
-            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small w3-margin-right" style="cursor:pointer" onclick="openChart(event, 'interval')">Interval</a>
-            <a class="link w3-bar-item w3-border w3-hover-text-blue w3-round w3-padding-small" style="cursor:pointer" onclick="openChart(event, 'solar')">solar</a>
+          <div class="w3-panel">
+            <label class="w3-label w3-text-black w3-wide" style="font-weight:bold;font-size:16px;">Solar Radiation</label>
           </div>
           <div class="w3-panel">
-            <div id="rssi" class="chart w3-border" style="width:100%;height:400px;"></div>
-            <div id="lsnr" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
-            <div id="interval" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
-            <div id="solar" class="chart w3-border" style="width:100%;height:400px;display:none;"></div>
+            <table id="table_nodes" class="w3-table w3-border w3-bordered w3-white w3-small">
+              <tr>
+                <th>Solar Radiation data</th>
+                <th>Solar(Max, Min, Avg)</th>
+                <th class="w3-right w3-margin-right"><a id="btn_add" class="w3-medium w3-hover-text-blue fa fa-plus-square-o" style="font-weight:bold;cursor:pointer;" title="Add Node" onclick="openAdd()"></a></th>
+              </tr>
+              <tr>
+                <td>No data available in table</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
           </div>
         </div>
+        
       </div>
     </div>
   <script>
