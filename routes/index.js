@@ -16,9 +16,9 @@ router.get('/realtime', passport.checkAuthenticate, function(req, res, next) {
   res.render('realtime');
 });
 
-router.get('/comparison', passport.checkAuthenticate, function(req, res, next) {
-  res.render('comparison');
-});
+// router.get('/comparison', passport.checkAuthenticate, function(req, res, next) {
+//   res.render('comparison');
+// });
 
 router.get('/login', function(req, res, next) {
   if (req.isAuthenticated()) res.redirect('/logout');
