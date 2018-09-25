@@ -30,6 +30,7 @@ function receiveStart(b) {
   document.getElementById('btn_stop').style.display = b ? 'inline-block' : 'none';
   document.getElementById('btn_add').style.display = b ? 'none' : 'inline-block';
   document.getElementById('btn_data').style.display = b ? 'none' : 'inline-block';
+  document.getElementById('btn_options').style.display = b ? 'none' : 'inline-block';
 
   if (b) {
     for (var x in nodes) clearCharts(x);
